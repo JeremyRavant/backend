@@ -1,6 +1,7 @@
 const { User } = require('../models/User')
 const bcrypt = require('bcrypt')
 const express = require('express')
+const jwt = require('jsonwebtoken')
 
 async function signUp(req, res) {
     const email = req.body.email
@@ -44,8 +45,19 @@ async function logIn(req, res) {
 
     res.send({
       userId: userInDb._id,
-      token: "token"
+      token: generateToken(userInDb._id)
     });
+  }
+
+
+  function generateToken (idInDB) {   
+    const payload = {
+        userId: idInDB,
+      }
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "1d"
+    })
+    return token
   }
 
     
@@ -60,7 +72,7 @@ async function logIn(req, res) {
   }
 
   const usersRouter = express.Router()
-  usersRouter.post("signup", signUp)
-  usersRouter.post("login", logIn)
+  usersRouter.post("/signup", signUp)
+  usersRouter.post("/login", logIn)
 
 module.exports = { usersRouter }
