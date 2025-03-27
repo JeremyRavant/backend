@@ -73,7 +73,6 @@ async function putBook (req, res) {
     if (book.year) newBook.year = book.year;
     if (book.genre) newBook.genre = book.genre;
     if (req.file != null) newBook.imageUrl = req.file.filename;
-    console.log("newBook", newBook)
 
 
     await Book.findByIdAndUpdate(id, newBook,)
@@ -108,7 +107,8 @@ function checkToken (req, res, next) {
         return
     }
     const token = authorization.split(" ")[1]
-    try {const tokenPayload =jwt.verify(token, process.env.JWT_SECRET)
+    try {
+        const tokenPayload =jwt.verify(token, process.env.JWT_SECRET)
         if (tokenPayload == null) {
             res.status(401).send("Unauthorized")
         }
@@ -154,11 +154,16 @@ async function postBook(req, res) {
 }
 
 async function getBooks(req, res) {
+    try {
     const books = await Book.find()
     books.forEach(book => {
         book.imageUrl = getAbsoluteImagePath(book.imageUrl)
     })
     res.send(books)
+    } catch(e) {
+        console.error(e)
+        res.status(500).send("Something went wrong" + e.message)
+    }
 }
 
 function getAbsoluteImagePath(fileName) {
