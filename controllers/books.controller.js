@@ -112,6 +112,7 @@ function checkToken (req, res, next) {
         if (tokenPayload == null) {
             res.status(401).send("Unauthorized")
         }
+        req.tokenPayload = tokenPayload;
         next()
     } catch (e) {
         console.error(e)
