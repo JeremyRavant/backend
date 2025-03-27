@@ -2,7 +2,7 @@ const {app} = require('./config/app')
 const { booksRouter} = require('./controllers/books.controller')
 const { usersRouter} = require('./controllers/users.controller')
 
-const PORT = process.env.PORT || 4000
+const PORT = process.env.PORT
 
 
 app.get('/', (req, res) => res.send("server running!"))
