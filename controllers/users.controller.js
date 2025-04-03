@@ -38,41 +38,38 @@ async function signUp(req, res) {
 
 
 async function logIn(req, res) {
-    const body = req.body;
-    if (email == null || body.password == null) {
-      res.status(400).send("Email and password are require")
-      return
-    }
-    try {
-      const userInDb = await User.findOne({
-          email: body.email
-      })
-      if (userInDb == null) {
-          res.status(401).send("wrong credentials")
-          return
-      }
+  const { email, password } = req.body;
 
-      const passwordInDb = userInDb.password
-      if (!isPasswordCorrect (req.body.password, passwordInDb)) {
-          res.status(401).send("wrong credentials")
-          return
-      }
-
-
-      res.send({
-        userId: userInDb._id,
-        token: generateToken(userInDb._id)
-      });
-    } catch {
-      console.error(e)
-      res.status(500).send("Something went wrong")
-    }
+  if (!email || !password) {
+    return res.status(400).send("Email and password are required");
   }
+
+  try {
+    const userInDb = await User.findOne({ email });
+    if (!userInDb) {
+      return res.status(401).send("Wrong credentials");
+    }
+
+    const passwordInDb = userInDb.password;
+    if (!isPasswordCorrect(password, passwordInDb)) {
+      return res.status(401).send("Wrong credentials");
+    }
+
+    res.send({
+      userId: userInDb._id,
+      token: generateToken(userInDb._id)
+    });
+
+  } catch (e) {
+    res.status(500).send("Something went wrong");
+  }
+} 
+
 
 
   function generateToken (idInDB) {   
     const payload = {
-        userId: idInDB,
+        userId: idInDB
       }
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: "1d"
