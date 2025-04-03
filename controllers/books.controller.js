@@ -37,7 +37,8 @@ async function postRating (req,res) {
         ratingsInDb.push(newRating)
         book.averageRating = calculateAverageRating(ratingsInDb)
         await book.save()
-        res.send ("rating posted")
+        book.imageUrl = getAbsoluteImagePath(book.imageUrl)
+        res.json(book)
     }   catch (e) {
         console.error(e)
         res.status(500).send("something went xrong:" + e.message)
