@@ -1,16 +1,16 @@
 const mongoose = require('mongoose');
 const {Book} = require('../models/Book')
 const express = require('express')
-const { upload } = require('../middlewares/multer')
+const { upload, optimize } = require('../middlewares/multer');
 const jwt = require('jsonwebtoken')
 
 const booksRouter = express.Router()
 booksRouter.get("/bestrating", getBestRating)
 booksRouter.get("/", getBooks)
 booksRouter.get("/:id", getBookById)
-booksRouter.post("/", checkToken, upload.single("image"),postBook)
+booksRouter.post("/", checkToken, upload.single("image"), optimize,postBook)
 booksRouter.delete("/:id", checkToken, deleteBook)
-booksRouter.put("/:id", checkToken, upload.single("image"), putBook)
+booksRouter.put("/:id", checkToken, upload.single("image"), optimize, putBook)
 booksRouter.post("/:id/rating", checkToken, postRating)
 
 async function postRating (req,res) {
