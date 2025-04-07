@@ -8,7 +8,7 @@ const booksRouter = express.Router()
 booksRouter.get("/bestrating", getBestRating)
 booksRouter.get("/", getBooks)
 booksRouter.get("/:id", getBookById)
-booksRouter.post("/", checkToken, upload.single("image"), optimize,postBook)
+booksRouter.post("/", checkToken, upload.single("image"), optimize, postBook)
 booksRouter.delete("/:id", checkToken, deleteBook)
 booksRouter.put("/:id", checkToken, upload.single("image"), optimize, putBook)
 booksRouter.post("/:id/rating", checkToken, postRating)
@@ -142,6 +142,7 @@ async function getBookById(req, res) {
 async function postBook(req, res) {
     const stringifieldbook = req.body.book
     const book = JSON.parse(stringifieldbook)
+    book.userId = req.tokenPayload.userId
     const filename = req.file.filename
     book.imageUrl = filename
         try {
@@ -170,8 +171,6 @@ async function getBooks(req, res) {
 function getAbsoluteImagePath(fileName) {
     return process.env.PUBLIC_URL + "/" + process.env.IMAGES_FOLDER_PATH + "/" + fileName
 }
-
-
 
 
 
